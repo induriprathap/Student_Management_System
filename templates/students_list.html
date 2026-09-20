@@ -1,0 +1,335 @@
+{% extends "mainbt.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Student Management</h2>
+            <p class="text-muted mb-0">
+                Manage student records, attendance and marks
+            </p>
+        </div>
+
+        <a href="{% url 'add_student' %}" class="btn btn-primary">
+            ➕ Add Student
+        </a>
+    </div>
+
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success alert-dismissible fade show">
+                {{ message }}
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+    <!-- Search Card -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+
+            <form method="get">
+
+                <div class="row g-2">
+
+                    <div class="col-md-10">
+                        <input
+                            type="text"
+                            name="search"
+                            value="{{ request.GET.search }}"
+                            placeholder="🔍 Search by name, roll number or branch..."
+                            class="form-control form-control-lg"
+                        >
+                    </div>
+
+                    <div class="col-md-2">
+                        <button
+                            type="submit"
+                            class="btn btn-dark btn-lg w-100">
+                            Search
+                        </button>
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-- Students Card -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <div>
+                    <h4 class="fw-bold mb-1">All Students</h4>
+                    <small class="text-muted">
+                        Student records
+                    </small>
+                </div>
+
+                <span class="badge bg-primary fs-6">
+                    Page {{ students.number }} of {{ students.paginator.num_pages }}
+                </span>
+
+            </div>
+
+
+            <!-- Responsive Table -->
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-dark">
+
+                        <tr>
+                            <th>Student</th>
+                            <th>Roll</th>
+                            <th>Email</th>
+                            <th>Branch</th>
+                            <th>DOB</th>
+                            <th>Phone</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for student in students %}
+
+                        <tr>
+
+                            <!-- Student -->
+                            <td>
+
+                                <div class="d-flex align-items-center">
+
+                                    {% if student.profile_pic %}
+
+                                        <img
+                                            src="{{ student.profile_pic.url }}"
+                                            alt="Profile"
+                                            class="rounded-circle me-3"
+                                            width="50"
+                                            height="50"
+                                            style="object-fit: cover;"
+                                        >
+
+                                    {% else %}
+
+                                        <div
+                                            class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
+                                            style="width:50px;height:50px;"
+                                        >
+                                            👤
+                                        </div>
+
+                                    {% endif %}
+
+                                    <div>
+                                        <strong>
+                                            {{ student.name }}
+                                        </strong>
+
+                                        <br>
+
+                                        <small class="text-muted">
+                                            Student
+                                        </small>
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+
+                            <!-- Roll -->
+                            <td>
+                                <span class="badge bg-light text-dark">
+                                    {{ student.roll }}
+                                </span>
+                            </td>
+
+
+                            <!-- Email -->
+                            <td>
+                                {{ student.email }}
+                            </td>
+
+
+                            <!-- Branch -->
+                            <td>
+                                <span class="badge bg-info text-dark">
+                                    {{ student.branch }}
+                                </span>
+                            </td>
+
+
+                            <!-- DOB -->
+                            <td>
+                                {{ student.dob|default:"-" }}
+                            </td>
+
+
+                            <!-- Phone -->
+                            <td>
+                                {{ student.phone|default:"-" }}
+                            </td>
+
+
+                            <!-- Actions -->
+                            <td>
+
+                                <div class="btn-group" role="group">
+
+                                    <a
+                                        href="{% url 'edit_student' student.id %}"
+                                        class="btn btn-sm btn-outline-primary"
+                                        title="Edit"
+                                    >
+                                        ✏️
+                                    </a>
+
+                                    <a
+                                        href="{% url 'delete_student' student.id %}"
+                                        class="btn btn-sm btn-outline-danger"
+                                        title="Delete"
+                                    >
+                                        🗑️
+                                    </a>
+
+                                    <a
+                                        href="{% url 'add_attendance' student.id %}"
+                                        class="btn btn-sm btn-outline-success"
+                                        title="Attendance"
+                                    >
+                                        📅
+                                    </a>
+
+                                    <a
+                                        href="{% url 'add_marks' student.id %}"
+                                        class="btn btn-sm btn-outline-warning"
+                                        title="Marks"
+                                    >
+                                        📊
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="7" class="text-center py-5">
+
+                                <div class="text-muted">
+
+                                    <h5>No students found</h5>
+
+                                    <p class="mb-3">
+                                        Try a different search or add a new student.
+                                    </p>
+
+                                    <a
+                                        href="{% url 'add_student' %}"
+                                        class="btn btn-primary"
+                                    >
+                                        ➕ Add Student
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- Pagination -->
+            {% if students.paginator.num_pages > 1 %}
+
+            <nav class="mt-4">
+
+                <ul class="pagination justify-content-center">
+
+                    {% if students.has_previous %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?page={{ students.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                        >
+                            ← Previous
+                        </a>
+
+                    </li>
+
+                    {% endif %}
+
+
+                    <li class="page-item active">
+
+                        <span class="page-link">
+                            {{ students.number }}
+                        </span>
+
+                    </li>
+
+
+                    {% if students.has_next %}
+
+                    <li class="page-item">
+
+                        <a
+                            class="page-link"
+                            href="?page={{ students.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                        >
+                            Next →
+                        </a>
+
+                    </li>
+
+                    {% endif %}
+
+                </ul>
+
+            </nav>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

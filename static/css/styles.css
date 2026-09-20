@@ -1,0 +1,15 @@
+
+h2 {
+    color: #2a6cb4 !important;
+}
+:root {
+  --bs-body-bg: #e6f608e0 !important;
+  --bs-body-color: #000000 !important;
+}
+
+body {
+  background-color: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+  font-family: Arial, sans-serif !important;
+}
+

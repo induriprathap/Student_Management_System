@@ -1,0 +1,7 @@
+{% extends 'mainbt.html' %}
+{% block content %}
+  <h2>Admin Dashboard</h2>
+  <p>Welcome, {{ user.username }} (Admin)</p>
+  <p>Total Students: {{ student_count }}</p>
+  <a href="{% url 'std_lst' %}">View All Students</a>
+{% endblock %}
