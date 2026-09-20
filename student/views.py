@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.admin.views.decorators import staff_member_required
+from .models import students
 
 
 # ============================================================
@@ -417,22 +418,34 @@ def register_user(request):
 
     if request.method == "POST":
 
-        form = UserCreationForm(
-            request.POST
-        )
+        form = UserCreationForm(request.POST)
 
         if form.is_valid():
 
-            form.save()
+            user = form.save()
+
+            # Create a student profile and link it to the new user
+            last_student = students.objects.order_by("-roll").first()
+
+            if last_student:
+                new_roll = last_student.roll + 1
+            else:
+                new_roll = 1
+
+            students.objects.create(
+                user=user,
+                name=user.username,
+                roll=new_roll,
+                branch="ECE",
+                email=user.email or ""
+            )
 
             messages.success(
                 request,
                 "Registered successfully! Please login."
             )
 
-            return redirect(
-                'login'
-            )
+            return redirect('login')
 
     else:
 
